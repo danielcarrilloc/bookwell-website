@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Dark mode */
+  .dark body {
+    @apply bg-background-dark text-foreground-dark;
+  }
+
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+
+  .dark *:focus-visible {
+    @apply ring-offset-background-dark;
+  }
+}
+
+@layer components {
+  /* Smooth transitions for theme switching */
+  body,
+  body * {
+    @apply transition-colors duration-200;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-border-dark;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-foreground-secondary;
+  }
+
+  /* Typography utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Container with consistent padding */
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-background border border-border rounded-lg p-6 shadow-sm;
+  }
+
+  .dark .card {
+    @apply bg-background-dark-secondary border-border-dark;
+  }
+
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  /* Input base styles */
+  .input {
+    @apply flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-foreground-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .dark .input {
+    @apply bg-background-dark border-border-dark ring-offset-background-dark;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-in {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  .animate-out {
+    animation: fadeOut 0.2s ease-in-out;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply backdrop-blur-md bg-background/80 border border-border/50;
+  }
+
+  .dark .glass {
+    @apply bg-background-dark/80 border-border-dark/50;
+  }
+
+  /* Gradient backgrounds */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600;
+  }
+
+  .gradient-subtle {
+    @apply bg-gradient-to-b from-background-secondary to-background;
+  }
+
+  .dark .gradient-subtle {
+    @apply from-background-dark-secondary to-background-dark;
+  }
+}
