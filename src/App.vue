@@ -1,30 +1,30 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="min-h-screen bg-white text-slate-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <Navbar />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <router-view v-slot="{ Component }">
+        <transition name="fade-scale" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </main>
+    <Toast />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
+<script setup lang="ts">
+import Navbar from '@/components/Navbar.vue'
+import Toast from '@/components/primitives/Toast.vue'
+</script>
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 200ms ease;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: translateY(4px) scale(0.98);
 }
 </style>
