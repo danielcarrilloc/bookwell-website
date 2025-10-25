@@ -287,5 +287,10 @@ export const useBookings = () => {
     checkInBooking,
     markNoShow,
     countBookings,
+
+    // Aliases for compatibility
+    fetchBookingsByClient: fetchClientBookings,
+    fetchBookingsByInstructor: fetchInstructorBookings,
+    checkIn: checkInBooking,
   }
 }

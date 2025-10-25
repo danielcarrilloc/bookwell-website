@@ -55,7 +55,7 @@
             <div class="flex items-start justify-between">
               <div>
                 <h3 class="font-semibold text-foreground text-lg">
-                  {{ pkg.packageId?.name || 'Package' }}
+                  {{ typeof pkg.packageId === 'object' ? pkg.packageId.name : 'Package' }}
                 </h3>
                 <p class="text-sm text-foreground-secondary mt-1">
                   Purchased {{ formatDate(pkg.purchasedAt) }}
@@ -67,13 +67,13 @@
             <div class="space-y-2">
               <div class="flex justify-between text-sm">
                 <span class="text-foreground-secondary">Credits remaining</span>
-                <span class="font-medium">{{ pkg.creditsRemaining }} / {{ pkg.packageId?.credits }}</span>
+                <span class="font-medium">{{ pkg.creditsRemaining }} / {{ typeof pkg.packageId === 'object' ? pkg.packageId.credits : pkg.creditsTotal }}</span>
               </div>
 
               <div class="w-full bg-background-secondary rounded-full h-2">
                 <div
                   class="bg-primary h-2 rounded-full transition-all"
-                  :style="{ width: `${(pkg.creditsRemaining / pkg.packageId?.credits) * 100}%` }"
+                  :style="{ width: `${(pkg.creditsRemaining / (typeof pkg.packageId === 'object' ? pkg.packageId.credits : pkg.creditsTotal)) * 100}%` }"
                 />
               </div>
 
@@ -115,7 +115,7 @@ import { usePackages } from '@/composables/usePackages'
 import { formatDate } from '@/utils/format'
 
 const authStore = useAuthStore()
-const { packages, isLoading, fetchClientPackages } = usePackages()
+const { clientPackages: packages, isLoading, fetchClientPackages } = usePackages()
 
 const activePackages = computed(() => {
   return packages.value.filter(pkg => pkg.creditsRemaining > 0 && pkg.status === 'active')
@@ -127,7 +127,8 @@ const totalCredits = computed(() => {
 
 const creditsUsed = computed(() => {
   return packages.value.reduce((sum, pkg) => {
-    return sum + ((pkg.packageId?.credits || 0) - pkg.creditsRemaining)
+    const totalCredits = typeof pkg.packageId === 'object' ? pkg.packageId.credits : pkg.creditsTotal
+    return sum + (totalCredits - pkg.creditsRemaining)
   }, 0)
 })
 

@@ -73,10 +73,11 @@ const loadClients = async () => {
     isLoading.value = true
     // This endpoint would need to be created on the backend
     // For now, it's a placeholder
-    const response = await httpClient.get(`/clients/instructor/${authStore.currentUser.instructor._id}`)
-    clients.value = response
+    const response = await httpClient.get<any[]>(`/clients/instructor/${authStore.currentUser.instructor._id}`)
+    clients.value = Array.isArray(response) ? response : []
   } catch (err) {
     console.error('Failed to load clients:', err)
+    clients.value = []
   } finally {
     isLoading.value = false
   }

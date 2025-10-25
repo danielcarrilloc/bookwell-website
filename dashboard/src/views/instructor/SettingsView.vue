@@ -136,8 +136,15 @@ onMounted(() => {
 
 <style scoped>
 .toggle {
-  @apply w-12 h-6 rounded-full cursor-pointer;
-  @apply bg-border checked:bg-primary;
-  @apply transition-colors;
+  width: 3rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  background-color: var(--color-border);
+  transition: background-color 0.2s;
+}
+
+.toggle:checked {
+  background-color: var(--color-primary);
 }
 </style>

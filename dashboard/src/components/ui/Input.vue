@@ -76,7 +76,7 @@ import { computed } from 'vue'
 interface Props {
   id?: string
   label?: string
-  type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url' | 'textarea'
+  type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url' | 'textarea' | 'date' | 'time' | 'datetime-local'
   modelValue?: string | number
   placeholder?: string
   disabled?: boolean

@@ -40,11 +40,11 @@
         v-for="booking in filteredBookings"
         :key="booking._id"
         :booking="{
-          className: booking.classId?.name || 'Unknown Class',
+          className: typeof booking.classId === 'object' ? booking.classId.name : 'Unknown Class',
           date: booking.date,
-          startTime: booking.classId?.startTime || '',
+          startTime: typeof booking.classId === 'object' ? (booking.classId.recurringSchedule?.[0]?.startTime || '') : '',
           status: booking.status,
-          instructorName: booking.classId?.instructorId?.businessName || 'Unknown Instructor'
+          instructorName: getInstructorName(booking)
         }"
       >
         <template #actions>
@@ -72,6 +72,7 @@ import EmptyState from '@/components/shared/EmptyState.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBookings } from '@/composables/useBookings'
 import { useToast } from '@/composables/useToast'
+import type { Booking } from '@/types'
 
 const authStore = useAuthStore()
 const { bookings, isLoading, fetchBookingsByClient, cancelBooking } = useBookings()
@@ -84,6 +85,16 @@ const tabs = [
   { label: 'Past', value: 'past' },
   { label: 'Cancelled', value: 'cancelled' },
 ]
+
+const getInstructorName = (booking: Booking): string => {
+  if (typeof booking.classId === 'object') {
+    const instructorId = booking.classId.instructorId
+    if (instructorId && typeof instructorId === 'object') {
+      return instructorId.businessName
+    }
+  }
+  return 'Unknown Instructor'
+}
 
 const filteredBookings = computed(() => {
   const now = new Date()

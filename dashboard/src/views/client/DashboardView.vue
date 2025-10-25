@@ -59,11 +59,11 @@
           v-for="booking in upcomingBookings"
           :key="booking._id"
           :booking="{
-            className: booking.classId?.name || 'Unknown Class',
+            className: typeof booking.classId === 'object' ? booking.classId.name : 'Unknown Class',
             date: booking.date,
-            startTime: booking.classId?.startTime || '',
+            startTime: typeof booking.classId === 'object' ? (booking.classId.recurringSchedule?.[0]?.startTime || '') : '',
             status: booking.status,
-            instructorName: booking.classId?.instructorId?.businessName || 'Unknown Instructor'
+            instructorName: getInstructorName(booking)
           }"
         >
           <template #actions>
@@ -108,9 +108,9 @@
         >
           <div class="flex items-start justify-between">
             <div>
-              <h3 class="font-semibold text-foreground">{{ pkg.packageId?.name }}</h3>
+              <h3 class="font-semibold text-foreground">{{ typeof pkg.packageId === 'object' ? pkg.packageId.name : 'Package' }}</h3>
               <p class="text-sm text-foreground-secondary mt-1">
-                {{ pkg.creditsRemaining }} of {{ pkg.packageId?.credits }} credits remaining
+                {{ pkg.creditsRemaining }} of {{ typeof pkg.packageId === 'object' ? pkg.packageId.credits : pkg.creditsTotal }} credits remaining
               </p>
               <p v-if="pkg.expiresAt" class="text-xs text-foreground-secondary mt-2">
                 Expires {{ formatDate(pkg.expiresAt) }}
@@ -139,16 +139,27 @@ import { useBookings } from '@/composables/useBookings'
 import { usePackages } from '@/composables/usePackages'
 import { useToast } from '@/composables/useToast'
 import { formatDate } from '@/utils/format'
+import type { Booking } from '@/types'
 
 const authStore = useAuthStore()
 const { bookings: upcomingBookings, isLoading, fetchBookingsByClient, cancelBooking } = useBookings()
-const { packages, fetchClientPackages } = usePackages()
+const { clientPackages: packages, fetchClientPackages } = usePackages()
 const { success, error } = useToast()
 
 const stats = ref({
   totalCredits: 0,
   classesThisMonth: 0,
 })
+
+const getInstructorName = (booking: Booking): string => {
+  if (typeof booking.classId === 'object') {
+    const instructorId = booking.classId.instructorId
+    if (instructorId && typeof instructorId === 'object') {
+      return instructorId.businessName
+    }
+  }
+  return 'Unknown Instructor'
+}
 
 const loadData = async () => {
   if (!authStore.currentUser?.client?._id) return

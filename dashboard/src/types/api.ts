@@ -6,6 +6,18 @@
 // User and Authentication Types
 export type UserRole = 'instructor' | 'client'
 
+export interface ClientProfile {
+  _id: string
+  userId: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  totalCredits?: number
+  createdAt?: string
+  updatedAt?: string
+}
+
 export interface CurrentUser {
   id: string
   email: string
@@ -14,6 +26,7 @@ export interface CurrentUser {
   lastName: string
   phone: string
   instructor?: InstructorProfile
+  client?: ClientProfile
 }
 
 export interface HealthResponse {
@@ -73,7 +86,7 @@ export interface DashboardStats {
 // Class Types
 export interface Class {
   _id: string
-  instructorId: string
+  instructorId: string | InstructorProfile
   name: string
   description: string
   type: string // e.g., 'yoga', 'pilates', 'personal_training'
@@ -86,6 +99,10 @@ export interface Class {
   isActive: boolean
   createdAt: string
   updatedAt: string
+}
+
+export interface ClassPopulated extends Omit<Class, 'instructorId'> {
+  instructorId: InstructorProfile
 }
 
 export interface RecurringSchedule {
@@ -127,9 +144,9 @@ export type BookingStatus = 'confirmed' | 'cancelled' | 'completed' | 'no-show' 
 
 export interface Booking {
   _id: string
-  clientId: string
+  clientId: string | Client
   instructorId: string
-  classId: string
+  classId: string | Class
   date: string // ISO date
   startTime: string
   endTime: string
@@ -142,6 +159,11 @@ export interface Booking {
   notes?: string
   createdAt: string
   updatedAt: string
+}
+
+export interface BookingPopulated extends Omit<Booking, 'classId' | 'clientId'> {
+  classId: Class
+  clientId: Client
 }
 
 export interface CreateBookingInput {
@@ -193,7 +215,7 @@ export interface Package {
 export interface ClientPackage {
   _id: string
   clientId: string
-  packageId: string
+  packageId: string | Package
   instructorId: string
   creditsRemaining: number
   creditsTotal: number
@@ -202,6 +224,10 @@ export interface ClientPackage {
   revokedAt?: string
   paymentId?: string
   status: 'active' | 'expired' | 'depleted' | 'revoked'
+}
+
+export interface ClientPackagePopulated extends Omit<ClientPackage, 'packageId'> {
+  packageId: Package
 }
 
 // Payment Types

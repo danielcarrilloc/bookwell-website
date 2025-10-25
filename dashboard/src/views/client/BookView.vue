@@ -110,7 +110,7 @@ import { useToast } from '@/composables/useToast'
 
 const authStore = useAuthStore()
 const { classes, isLoading, fetchAllClasses } = useClasses()
-const { packages, fetchClientPackages } = usePackages()
+const { clientPackages: packages, fetchClientPackages } = usePackages()
 const { success, error } = useToast()
 
 const searchQuery = ref('')

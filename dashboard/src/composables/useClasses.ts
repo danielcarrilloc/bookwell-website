@@ -306,5 +306,8 @@ export const useClasses = () => {
     removeRecurringSchedule,
     addOneOffDate,
     removeOneOffDate,
+
+    // Aliases for compatibility
+    fetchAllClasses: fetchMyClasses,
   }
 }
