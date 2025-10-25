@@ -1,14 +1,13 @@
 import { ref, computed } from 'vue'
 import { httpClient } from '@/utils/http-client'
 import type { CurrentUser, LoginInput, RegisterInput } from '@/types'
-import { useRouter } from 'vue-router'
+import { authClient } from '@/plugins/better-auth'
 
 const currentUser = ref<CurrentUser | null>(null)
 const isLoading = ref(false)
 const error = ref<string | null>(null)
 
 export const useAuth = () => {
-  const router = useRouter()
 
   const isAuthenticated = computed(() => !!currentUser.value)
   const isInstructor = computed(() => currentUser.value?.role === 'instructor')
@@ -34,26 +33,25 @@ export const useAuth = () => {
   }
 
   /**
-   * Login with email and password
-   * Note: Actual Better Auth login will be handled by the Better Auth client
-   * This is a placeholder that checks the session after login
+   * Login with email and password using Better Auth
    */
   const login = async (credentials: LoginInput) => {
     try {
       isLoading.value = true
       error.value = null
 
-      // Better Auth handles the actual login via its own endpoint
-      // We'll use the Better Auth client in the component
-      // After successful login, fetch the current user
-      await fetchCurrentUser()
+      // Use Better Auth client for login
+      const result = await authClient.signIn.email({
+        email: credentials.email,
+        password: credentials.password,
+      })
 
-      // Redirect based on role
-      if (currentUser.value?.role === 'instructor') {
-        router.push('/dashboard/instructor')
-      } else {
-        router.push('/dashboard/client')
+      if (result.error) {
+        throw new Error(result.error.message || 'Login failed')
       }
+
+      // Fetch current user after successful login
+      await fetchCurrentUser()
 
       return currentUser.value
     } catch (err: any) {
@@ -65,16 +63,26 @@ export const useAuth = () => {
   }
 
   /**
-   * Register new user
-   * Note: Actual Better Auth registration will be handled by the Better Auth client
+   * Register new user using Better Auth
    */
   const register = async (data: RegisterInput) => {
     try {
       isLoading.value = true
       error.value = null
 
-      // Better Auth handles registration
-      // After successful registration, user should be logged in automatically
+      // Use Better Auth client for registration
+      const result = await authClient.signUp.email({
+        email: data.email,
+        password: data.password,
+        name: `${data.firstName} ${data.lastName}`,
+        callbackURL: '/dashboard',
+      })
+
+      if (result.error) {
+        throw new Error(result.error.message || 'Registration failed')
+      }
+
+      // Fetch current user after successful registration
       await fetchCurrentUser()
 
       return currentUser.value
@@ -87,18 +95,18 @@ export const useAuth = () => {
   }
 
   /**
-   * Logout current user
+   * Logout current user using Better Auth
    */
   const logout = async () => {
     try {
       isLoading.value = true
       error.value = null
 
-      // Better Auth handles logout
+      // Use Better Auth client for logout
+      await authClient.signOut()
+
       // Clear local user data
       currentUser.value = null
-
-      router.push('/login')
     } catch (err: any) {
       error.value = err.message || 'Logout failed'
       throw err
@@ -151,15 +159,22 @@ export const useAuth = () => {
   }
 
   /**
-   * Reset password request
+   * Reset password request using Better Auth
    */
   const requestPasswordReset = async (email: string) => {
     try {
       isLoading.value = true
       error.value = null
 
-      // Better Auth handles password reset
-      // This would use the Better Auth client
+      // Use Better Auth client for password reset
+      const result = await authClient.forgetPassword({
+        email,
+        redirectTo: '/reset-password',
+      })
+
+      if (result.error) {
+        throw new Error(result.error.message || 'Failed to request password reset')
+      }
 
       return true
     } catch (err: any) {
